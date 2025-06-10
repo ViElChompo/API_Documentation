@@ -1,1288 +1,2517 @@
 <!DOCTYPE html>
+
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formation API v1.0 - Documentation</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Nova League API v1.0 - Documentation</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      /* Reset et base */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: #f8f9fa;
-        }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
+      /* Container principal */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        min-height: 100vh;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+      }
 
+      /* Header */
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 6rem 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        min-height: 50vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
+      }
+
+      .header-content {
+        position: relative;
+        z-index: 2;
+      }
+
+      .header h1 {
+        font-size: 4rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .header p {
+        font-size: 1.4rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .version-badge {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 0.8rem 2rem;
+        border-radius: 30px;
+        font-size: 1rem;
+        font-weight: 500;
+        margin-top: 1rem;
+        backdrop-filter: blur(10px);
+      }
+
+      /* Navigation */
+      .nav {
+        background: #2c3e50;
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .nav-list {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: center;
+      }
+
+      .nav-item a {
+        color: white;
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid transparent;
+      }
+
+      .nav-item a:hover {
+        background: #3498db;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+      }
+
+      /* Content */
+      .content {
+        padding: 2rem;
+      }
+
+      /* Sections */
+      .section {
+        margin-bottom: 3rem;
+      }
+
+      .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        color: #2c3e50;
+        border-bottom: 3px solid #3498db;
+        padding-bottom: 0.5rem;
+      }
+
+      /* Auth info */
+      .auth-info {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        border: 2px solid #2196f3;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .auth-info h3 {
+        color: #1565c0;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+      }
+
+      .auth-info p {
+        margin-bottom: 0.5rem;
+      }
+
+      .auth-info code {
+        background: rgba(255, 255, 255, 0.7);
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-family: monospace;
+      }
+
+      /* Endpoints */
+      .endpoint {
+        background: #f8f9fa;
+        border: 2px solid #dee2e6;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .endpoint:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        border-color: #3498db;
+      }
+
+      .endpoint.post {
+        border-left: 5px solid #ffc107;
+      }
+
+      .endpoint.patch {
+        border-left: 5px solid #fd7e14;
+      }
+
+      .endpoint.delete {
+        border-left: 5px solid #dc3545;
+      }
+
+      .endpoint.put {
+        border-left: 5px solid #6f42c1;
+      }
+
+      .endpoint:not(.post):not(.patch):not(.delete):not(.put) {
+        border-left: 5px solid #28a745;
+      }
+
+      .endpoint-header {
+        background: #ffffff;
+        padding: 1.5rem;
+        border-bottom: 1px solid #dee2e6;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .endpoint-method {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .method-get {
+        background: #28a745;
+        color: white;
+      }
+
+      .method-post {
+        background: #ffc107;
+        color: #212529;
+      }
+
+      .method-patch {
+        background: #fd7e14;
+        color: white;
+      }
+
+      .method-delete {
+        background: #dc3545;
+        color: white;
+      }
+
+      .method-put {
+        background: #6f42c1;
+        color: white;
+      }
+
+      .endpoint-path {
+        font-family: "Courier New", monospace;
+        font-size: 1.1rem;
+        color: #495057;
+        font-weight: 600;
+        background: #e9ecef;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+      }
+
+      .endpoint-body {
+        padding: 1.5rem;
+      }
+
+      .endpoint-description {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+        font-size: 1.05rem;
+      }
+
+      /* Paramètres et réponses */
+      .params,
+      .response {
+        margin-top: 1.5rem;
+      }
+
+      .params-title,
+      .response-title {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+      }
+
+      .param {
+        background: #ffffff;
+        border: 1px solid #dee2e6;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        border-radius: 8px;
+        border-left: 4px solid #3498db;
+      }
+
+      .param-name {
+        font-family: "Courier New", monospace;
+        font-weight: 600;
+        color: #e83e8c;
+      }
+
+      .param-type {
+        color: #6f42c1;
+        font-size: 0.9rem;
+        font-style: italic;
+      }
+
+      .response-code {
+        display: inline-block;
+        padding: 0.3rem 0.7rem;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-right: 0.75rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .response-code:not(.error):not(.validation) {
+        background: #28a745;
+        color: white;
+      }
+
+      .response-code.error {
+        background: #dc3545;
+        color: white;
+      }
+
+      .response-code.validation {
+        background: #ffc107;
+        color: #212529;
+      }
+
+      /* Code blocks */
+      .code-block {
+        background: #2d3748;
+        color: #e2e8f0;
+        padding: 1.5rem;
+        border-radius: 10px;
+        font-family: "Courier New", monospace;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+        overflow-x: auto;
+        border: 1px solid #4a5568;
+      }
+
+      /* Notes */
+      .note {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+        border-left: 4px solid #ffc107;
+      }
+
+      .note strong {
+        color: #856404;
+      }
+
+      /* Footer */
+      .footer {
+        margin-top: 3rem;
+        padding: 2rem;
+        background: #f8f9fa;
+        border-top: 3px solid #3498db;
+        text-align: center;
+        color: #6c757d;
+      }
+
+      .footer h3 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem;
-            text-align: center;
+          padding: 4rem 1rem;
+          min-height: 40vh;
         }
 
         .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+          font-size: 2.5rem;
         }
 
         .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .nav {
-            background: #2c3e50;
-            padding: 1rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+          font-size: 1.1rem;
         }
 
         .nav-list {
-            list-style: none;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .nav-item a {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: background 0.3s;
-        }
-
-        .nav-item a:hover {
-            background: rgba(255,255,255,0.1);
+          flex-direction: column;
+          align-items: center;
         }
 
         .content {
-            padding: 2rem;
-        }
-
-        .section {
-            margin-bottom: 3rem;
+          padding: 1rem;
         }
 
         .section-title {
-            font-size: 1.8rem;
-            color: #2c3e50;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 3px solid #3498db;
-        }
-
-        .endpoint {
-            background: #f8f9fa;
-            border-left: 4px solid #28a745;
-            margin-bottom: 1.5rem;
-            border-radius: 0 8px 8px 0;
-            overflow: hidden;
-        }
-
-        .endpoint.post {
-            border-left-color: #ffc107;
-        }
-
-        .endpoint.patch {
-            border-left-color: #fd7e14;
-        }
-
-        .endpoint.delete {
-            border-left-color: #dc3545;
+          font-size: 2rem;
         }
 
         .endpoint-header {
-            background: white;
-            padding: 1rem;
-            border-bottom: 1px solid #dee2e6;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+
+      /* Print styles */
+      @media print {
+        .nav {
+          display: none;
         }
 
-        .endpoint-method {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 0.8rem;
-            margin-right: 1rem;
+        body {
+          background: white;
         }
 
-        .method-get {
-            background: #28a745;
-            color: white;
+        .container {
+          box-shadow: none;
         }
 
-        .method-post {
-            background: #ffc107;
-            color: #212529;
+        .endpoint {
+          break-inside: avoid;
+          page-break-inside: avoid;
         }
-
-        .method-patch {
-            background: #fd7e14;
-            color: white;
-        }
-
-        .method-delete {
-            background: #dc3545;
-            color: white;
-        }
-
-        .endpoint-path {
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 1.1rem;
-            color: #495057;
-            font-weight: 500;
-        }
-
-        .endpoint-body {
-            padding: 1rem;
-        }
-
-        .endpoint-description {
-            color: #6c757d;
-            margin-bottom: 1rem;
-        }
-
-        .params {
-            margin-top: 1rem;
-        }
-
-        .params-title {
-            font-weight: bold;
-            color: #495057;
-            margin-bottom: 0.5rem;
-        }
-
-        .param {
-            background: white;
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
-            border-radius: 4px;
-            border: 1px solid #dee2e6;
-        }
-
-        .param-name {
-            font-family: monospace;
-            font-weight: bold;
-            color: #e83e8c;
-        }
-
-        .param-type {
-            color: #6f42c1;
-            font-size: 0.9rem;
-        }
-
-        .response {
-            margin-top: 1rem;
-        }
-
-        .response-title {
-            font-weight: bold;
-            color: #495057;
-            margin-bottom: 0.5rem;
-        }
-
-        .response-code {
-            display: inline-block;
-            background: #28a745;
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 0.9rem;
-            margin-right: 0.5rem;
-        }
-
-        .response-code.error {
-            background: #dc3545;
-        }
-
-        .response-code.validation {
-            background: #ffc107;
-            color: #212529;
-        }
-
-        .code-block {
-            background: #f1f3f4;
-            padding: 1rem;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-            overflow-x: auto;
-        }
-
-        .auth-info {
-            background: #e3f2fd;
-            border: 1px solid #90caf9;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .auth-info h3 {
-            color: #1565c0;
-            margin-bottom: 1rem;
-        }
-
-        .note {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 4px;
-            padding: 0.75rem;
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .note strong {
-            color: #856404;
-        }
-
-        @media print {
-            .nav {
-                position: static;
-            }
-            
-            .endpoint {
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
-            
-            .section {
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .nav-list {
-                flex-direction: column;
-            }
-            
-            .content {
-                padding: 1rem;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <header class="header">
-            <h1>Formation API</h1>
-            <p>Documentation complète de l'API de plateforme de formation - Version 1.0</p>
-        </header>
+      <header class="header">
+        <div class="header-content">
+          <h1>Nova League API</h1>
+          <p>
+            Documentation complète de l'API utilisée par l'application Nova League.
+          </p>
 
-        <nav class="nav">
-            <ul class="nav-list">
-                <li class="nav-item"><a href="#auth">Authentification</a></li>
-                <li class="nav-item"><a href="#modules">Modules</a></li>
-                <li class="nav-item"><a href="#challenges">Challenges</a></li>
-                <li class="nav-item"><a href="#formaquiz">FormaQuiz</a></li>
-                <li class="nav-item"><a href="#users">Utilisateurs</a></li>
-                <li class="nav-item"><a href="#progress">Progrès</a></li>
-                <li class="nav-item"><a href="#markets">Marchés</a></li>
-                <li class="nav-item"><a href="#places">Points de vente</a></li>
-                <li class="nav-item"><a href="#registration">Inscription</a></li>
-                <li class="nav-item"><a href="#content">Contenu</a></li>
-            </ul>
-        </nav>
-
-        <div class="content">
-            <!-- Authentification -->
-            <section id="auth" class="auth-info">
-                <h3>🔐 Authentification</h3>
-                <p><strong>Type :</strong> Cookies de session Laravel Breeze</p>
-                <p><strong>URL de base :</strong> <code>https://votre-domaine.com/api/v1</code></p>
-                <p><strong>État actuel :</strong> Routes publiques (pas de middleware d'authentification encore implémenté)</p>
-                <div class="note">
-                    <strong>Note :</strong> L'authentification sera progressivement implémentée sur les routes de création/modification.
-                </div>
-            </section>
-
-            <!-- MODULES -->
-            <section id="modules" class="section">
-                <h2 class="section-title">📚 Modules</h2>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/modules</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère la liste de tous les modules de formation disponibles</div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Liste des modules récupérée avec succès</div>
-                            <div><span class="response-code error">500</span> Erreur interne du serveur</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/modules/{id}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère les détails d'un module spécifique par son ID</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">id</span> <span class="param-type">(integer, requis)</span> - ID du module
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Module récupéré avec succès</div>
-                            <div><span class="response-code error">404</span> Module non trouvé</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/modules/past</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère la liste des modules qui sont terminés ou expirés</div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Modules passés récupérés avec succès</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/modules/with-relations</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère les modules avec leurs données liées (challenges, formaquiz, etc.)</div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Modules avec relations récupérés avec succès</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/modules/{moduleId}/challenge</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère le défi associé à un module spécifique</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">moduleId</span> <span class="param-type">(integer, requis)</span> - ID du module
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Défi récupéré avec succès</div>
-                            <div><span class="response-code error">404</span> Défi non trouvé</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/modules/{moduleId}/formaQuizzes</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère tous les FormaquiZ associés à un module</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">moduleId</span> <span class="param-type">(integer, requis)</span> - ID du module
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Quiz récupérés avec succès</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/modules/{moduleId}/questions</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère toutes les questions associées à un module</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">moduleId</span> <span class="param-type">(integer, requis)</span> - ID du module
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Questions récupérées avec succès</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- CHALLENGES -->
-            <section id="challenges" class="section">
-                <h2 class="section-title">🎯 Challenges</h2>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/challenges</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère la liste de tous les défis disponibles</div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Défis récupérés avec succès</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/challenges/{id}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère les détails d'un défi par son ID</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">id</span> <span class="param-type">(integer, requis)</span> - ID du défi
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Défi récupéré avec succès</div>
-                            <div><span class="response-code error">404</span> Défi non trouvé</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- FORMAQUIZ -->
-            <section id="formaquiz" class="section">
-                <h2 class="section-title">📝 FormaQuiz</h2>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/formaQuizzes/{id}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère les détails d'un FormaquiZ par son ID</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">id</span> <span class="param-type">(integer, requis)</span> - ID du FormaquiZ
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> FormaquiZ récupéré avec succès</div>
-                            <div><span class="response-code error">404</span> FormaquiZ non trouvé</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/formaQuizzes/{formaquizId}/pages</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère toutes les pages associées à un FormaquiZ</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">formaquizId</span> <span class="param-type">(integer, requis)</span> - ID du FormaquiZ
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Pages récupérées avec succès</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- USERS -->
-            <section id="users" class="section">
-                <h2 class="section-title">👥 Utilisateurs</h2>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/users</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère la liste de tous les utilisateurs enregistrés</div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Utilisateurs récupérés avec succès</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/users/{id}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère les détails d'un utilisateur par son ID</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">id</span> <span class="param-type">(integer, requis)</span> - ID de l'utilisateur
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Utilisateur récupéré avec succès</div>
-                            <div><span class="response-code error">404</span> Utilisateur non trouvé</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/users/place-of-sales</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère les utilisateurs groupés ou filtrés par point de vente</div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Utilisateurs récupérés avec succès</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/users/work-start-date</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère les utilisateurs filtrés par leur date de début de travail</div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Utilisateurs récupérés avec succès</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- PROGRESS -->
-            <section id="progress" class="section">
-                <h2 class="section-title">📊 Progrès</h2>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/users/{userId}/progress</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère tous les progrès de défis pour un utilisateur</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">userId</span> <span class="param-type">(integer, requis)</span> - ID de l'utilisateur
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Progrès récupérés avec succès</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint post">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-post">POST</span>
-                        <span class="endpoint-path">/users/progress</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Enregistre un nouveau score ou progrès pour un utilisateur</div>
-                        <div class="note">
-                            <strong>Note :</strong> Cette route sera protégée par authentification dans une version future.
-                        </div>
-                        <div class="code-block">
-{
-  "user_id": 1,
-  "challenge_id": 1,
-  "score": 85,
-  "time_spent": 300
-}
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">201</span> Progrès créé avec succès</div>
-                            <div><span class="response-code validation">422</span> Erreur de validation</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/users/{userId}/progress/{challengeId}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère le progrès d'un utilisateur pour un défi donné</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">userId</span> <span class="param-type">(integer, requis)</span> - ID de l'utilisateur
-                            </div>
-                            <div class="param">
-                                <span class="param-name">challengeId</span> <span class="param-type">(integer, requis)</span> - ID du défi
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Progrès récupéré avec succès</div>
-                            <div><span class="response-code error">404</span> Progrès non trouvé</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint patch">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-patch">PATCH</span>
-                        <span class="endpoint-path">/users/{userId}/progress/{challengeId}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Met à jour le meilleur score d'un utilisateur pour un défi</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">userId</span> <span class="param-type">(integer, requis)</span> - ID de l'utilisateur
-                            </div>
-                            <div class="param">
-                                <span class="param-name">challengeId</span> <span class="param-type">(integer, requis)</span> - ID du défi
-                            </div>
-                        </div>
-                        <div class="note">
-                            <strong>Note :</strong> Cette route sera protégée par authentification dans une version future.
-                        </div>
-                        <div class="code-block">
-{
-  "score": 90
-}
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Score mis à jour avec succès</div>
-                            <div><span class="response-code error">404</span> Progrès non trouvé</div>
-                            <div><span class="response-code validation">422</span> Erreur de validation</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- FORMAQUIZ PROGRESS -->
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/users/{userId}/formaquiz-progresses</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère tous les progrès de FormaquiZ pour un utilisateur</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">userId</span> <span class="param-type">(integer, requis)</span> - ID de l'utilisateur
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Progrès FormaquiZ récupérés avec succès</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint post">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-post">POST</span>
-                        <span class="endpoint-path">/users/formaquiz-progresses</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Crée un nouveau progrès FormaquiZ pour un utilisateur</div>
-                        <div class="note">
-                            <strong>Note :</strong> Cette route sera protégée par authentification dans une version future.
-                        </div>
-                        <div class="code-block">
-{
-  "user_id": 1,
-  "formaquiz_id": 1,
-  "score": 75,
-  "completion_percentage": 50.5
-}
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">201</span> Progrès FormaquiZ créé avec succès</div>
-                            <div><span class="response-code validation">422</span> Erreur de validation</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/users/{userId}/formaquiz-progresses/{formaquizId}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère le progrès d'un utilisateur pour un FormaquiZ donné</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">userId</span> <span class="param-type">(integer, requis)</span> - ID de l'utilisateur
-                            </div>
-                            <div class="param">
-                                <span class="param-name">formaquizId</span> <span class="param-type">(integer, requis)</span> - ID du FormaquiZ
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Progrès FormaquiZ récupéré avec succès</div>
-                            <div><span class="response-code error">404</span> Progrès non trouvé</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint patch">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-patch">PATCH</span>
-                        <span class="endpoint-path">/users/{userId}/formaquiz-progresses/{userFormaquizId}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Met à jour le progrès FormaquiZ d'un utilisateur</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">userId</span> <span class="param-type">(integer, requis)</span> - ID de l'utilisateur
-                            </div>
-                            <div class="param">
-                                <span class="param-name">userFormaquizId</span> <span class="param-type">(integer, requis)</span> - ID du progrès FormaquiZ utilisateur
-                            </div>
-                        </div>
-                        <div class="note">
-                            <strong>Note :</strong> Cette route sera protégée par authentification dans une version future.
-                        </div>
-                        <div class="code-block">
-{
-  "score": 85,
-  "completion_percentage": 87.5,
-  "is_completed": true,
-  "time_spent": 450
-}
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Progrès FormaquiZ mis à jour avec succès</div>
-                            <div><span class="response-code error">404</span> Progrès non trouvé</div>
-                            <div><span class="response-code validation">422</span> Erreur de validation</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MODULE PROGRESS -->
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/users/{userId}/modules-progresses</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère tous les progrès de modules pour un utilisateur</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">userId</span> <span class="param-type">(integer, requis)</span> - ID de l'utilisateur
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Progrès de modules récupérés avec succès</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint post">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-post">POST</span>
-                        <span class="endpoint-path">/users/modules-progresses</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Crée un nouveau progrès de module pour un utilisateur</div>
-                        <div class="note">
-                            <strong>Note :</strong> Cette route sera protégée par authentification dans une version future.
-                        </div>
-                        <div class="code-block">
-{
-  "user_id": 1,
-  "module_id": 1,
-  "progress_percentage": 25.0
-}
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">201</span> Progrès de module créé avec succès</div>
-                            <div><span class="response-code validation">422</span> Erreur de validation</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/users/{userId}/modules-progresses/{moduleId}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère le progrès d'un utilisateur pour un module donné</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">userId</span> <span class="param-type">(integer, requis)</span> - ID de l'utilisateur
-                            </div>
-                            <div class="param">
-                                <span class="param-name">moduleId</span> <span class="param-type">(integer, requis)</span> - ID du module
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Progrès de module récupéré avec succès</div>
-                            <div><span class="response-code error">404</span> Progrès non trouvé</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint patch">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-patch">PATCH</span>
-                        <span class="endpoint-path">/users/{userId}/modules-progresses/{userModuleId}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Met à jour le progrès de module d'un utilisateur</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">userId</span> <span class="param-type">(integer, requis)</span> - ID de l'utilisateur
-                            </div>
-                            <div class="param">
-                                <span class="param-name">userModuleId</span> <span class="param-type">(integer, requis)</span> - ID du progrès module utilisateur
-                            </div>
-                        </div>
-                        <div class="note">
-                            <strong>Note :</strong> Cette route sera protégée par authentification dans une version future.
-                        </div>
-                        <div class="code-block">
-{
-  "progress_percentage": 65.5,
-  "is_completed": false
-}
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Progrès de module mis à jour avec succès</div>
-                            <div><span class="response-code error">404</span> Progrès non trouvé</div>
-                            <div><span class="response-code validation">422</span> Erreur de validation</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MONTH STREAK -->
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/users/{userId}/month-streak</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère les statistiques de série mensuelle d'un utilisateur</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">userId</span> <span class="param-type">(integer, requis)</span> - ID de l'utilisateur
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Série mensuelle récupérée avec succès</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint post">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-post">POST</span>
-                        <span class="endpoint-path">/users/month-streak</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Crée une nouvelle série mensuelle pour un utilisateur</div>
-                        <div class="note">
-                            <strong>Note :</strong> Cette route sera protégée par authentification dans une version future.
-                        </div>
-                        <div class="code-block">
-{
-  "user_id": 1,
-  "month": 3,
-  "year": 2024,
-  "current_streak": 1
-}
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">201</span> Série mensuelle créée avec succès</div>
-                            <div><span class="response-code validation">422</span> Erreur de validation</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint patch">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-patch">PATCH</span>
-                        <span class="endpoint-path">/users/{userId}/month-streak</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Met à jour la série mensuelle d'un utilisateur</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">userId</span> <span class="param-type">(integer, requis)</span> - ID de l'utilisateur
-                            </div>
-                        </div>
-                        <div class="note">
-                            <strong>Note :</strong> Cette route sera protégée par authentification dans une version future.
-                        </div>
-                        <div class="code-block">
-{
-  "current_streak": 16,
-  "longest_streak": 31,
-  "last_activity_date": "2024-03-16"
-}
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Série mensuelle mise à jour avec succès</div>
-                            <div><span class="response-code error">404</span> Série non trouvée</div>
-                            <div><span class="response-code validation">422</span> Erreur de validation</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- MARKETS -->
-            <section id="markets" class="section">
-                <h2 class="section-title">🌍 Marchés</h2>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/markets</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère la liste de tous les marchés disponibles</div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Marchés récupérés avec succès</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/markets/{id}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère les détails d'un marché par son ID</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">id</span> <span class="param-type">(integer, requis)</span> - ID du marché
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Marché récupéré avec succès</div>
-                            <div><span class="response-code error">404</span> Marché non trouvé</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- PLACES OF SALES -->
-            <section id="places" class="section">
-                <h2 class="section-title">🏪 Points de vente</h2>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/placeOfSales</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère la liste de tous les points de vente</div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Points de vente récupérés avec succès</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/placeOfSales/{id}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère les détails d'un point de vente par son ID</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">id</span> <span class="param-type">(integer, requis)</span> - ID du point de vente
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Point de vente récupéré avec succès</div>
-                            <div><span class="response-code error">404</span> Point de vente non trouvé</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/placeOfSales/{placeOfSalesId}/users</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère tous les utilisateurs associés à un point de vente</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">placeOfSalesId</span> <span class="param-type">(integer, requis)</span> - ID du point de vente
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Utilisateurs récupérés avec succès</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- REGISTRATION -->
-            <section id="registration" class="section">
-                <h2 class="section-title">✍️ Inscription</h2>
-
-                <div class="endpoint post">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-post">POST</span>
-                        <span class="endpoint-path">/registerKey</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Crée un nouveau compte utilisateur en utilisant une clé d'enregistrement</div>
-                        <div class="note">
-                            <strong>Note :</strong> Cette route a un rate limiting pour éviter les abus d'inscription.
-                        </div>
-                        <div class="code-block">
-{
-  "registration_key": "ABC123DEF456",
-  "first_name": "Jean",
-  "last_name": "Dupont",
-  "email": "jean.dupont@exemple.com",
-  "password": "motdepasse123",
-  "work_start_date": "2024-01-15"
-}
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">201</span> Utilisateur enregistré avec succès</div>
-                            <div><span class="response-code validation">422</span> Erreur de validation</div>
-                            <div><span class="response-code error">429</span> Limite de taux dépassée</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/registration-keys/verify/{registrationKey}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Vérifie la validité d'une clé d'enregistrement</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">registrationKey</span> <span class="param-type">(string, requis)</span> - Clé d'enregistrement à vérifier
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Clé valide</div>
-                            <div><span class="response-code error">404</span> Clé invalide ou expirée</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/registration-keys/{key}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère les informations associées à une clé d'enregistrement</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">key</span> <span class="param-type">(string, requis)</span> - Clé d'enregistrement
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Détails de la clé récupérés avec succès</div>
-                            <div><span class="response-code error">404</span> Clé non trouvée</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- CONTENT -->
-            <section id="content" class="section">
-                <h2 class="section-title">📖 Contenu et Questions</h2>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/pages/{pageId}/questions</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère toutes les questions associées à une page</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">pageId</span> <span class="param-type">(integer, requis)</span> - ID de la page
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Questions récupérées avec succès</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/choices/question/{questionId}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère tous les choix de réponse pour une question donnée</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">questionId</span> <span class="param-type">(integer, requis)</span> - ID de la question
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Choix récupérés avec succès</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="endpoint-method method-get">GET</span>
-                        <span class="endpoint-path">/pages/theory/{pageId}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        <div class="endpoint-description">Récupère le contenu théorique associé à une page</div>
-                        <div class="params">
-                            <div class="params-title">Paramètres :</div>
-                            <div class="param">
-                                <span class="param-name">pageId</span> <span class="param-type">(integer, requis)</span> - ID de la page
-                            </div>
-                        </div>
-                        <div class="response">
-                            <div class="response-title">Réponses :</div>
-                            <div><span class="response-code">200</span> Théorie récupérée avec succès</div>
-                            <div><span class="response-code error">404</span> Contenu théorique non trouvé</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- FOOTER -->
-            <footer style="margin-top: 3rem; padding: 2rem; background: #f8f9fa; border-top: 1px solid #dee2e6; text-align: center; color: #6c757d;">
-                <p><strong>Breitling Nova League API v1.0</strong></p>
-                
-            </footer>
+          <a href="https://nova-league.com" class="version-badge" target="_blank">
+            Version 1.0 • Nova League
+          </a>
         </div>
+      </header>
+      <nav class="nav">
+        <ul class="nav-list">
+          <li class="nav-item"><a href="#auth">🔐 Authentification</a></li>
+          <li class="nav-item"><a href="#web-routes">🌐 Routes Web</a></li>
+          <li class="nav-item"><a href="#modules">📚 Modules</a></li>
+          <li class="nav-item"><a href="#challenges">🎯 Challenges</a></li>
+          <li class="nav-item"><a href="#formaquiz">📝 FormaQuiz</a></li>
+          <li class="nav-item"><a href="#users">👥 Utilisateurs</a></li>
+          <li class="nav-item"><a href="#progress">📊 Progrès</a></li>
+          <li class="nav-item"><a href="#markets">🌍 Marchés</a></li>
+          <li class="nav-item"><a href="#places">🏪 Points de vente</a></li>
+          <li class="nav-item"><a href="#registration">✍️ Inscription</a></li>
+          <li class="nav-item"><a href="#content">📖 Contenu</a></li>
+        </ul>
+      </nav>
+      <div class="content">
+        <!-- Authentification -->
+        <section class="section" id="auth">
+          <div class="auth-info">
+            <h3>🔐 Authentification</h3>
+            <p><strong>Type :</strong> Cookies de session Laravel Breeze</p>
+            <p>
+              <strong>URL de base API :</strong>
+              <code>https://nova-league.com/api/v1</code>
+            </p>
+            <p>
+              <strong>URL de base Auth :</strong>
+              <code>https://nova-league.com</code>
+            </p>
+            <p>
+              <strong>État actuel :</strong> Système d'authentification complet
+              avec Laravel Breeze
+            </p>
+            <div class="note">
+              <strong>Note :</strong> L'authentification sera progressivement
+              implémentée sur les routes API de création/modification.
+            </div>
+          </div>
+          <h2 class="section-title">🔑 Routes d'authentification</h2>
+          <!-- Login -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/login</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Affiche le formulaire de connexion pour les utilisateurs
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Page de connexion
+                  affichée
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> guest (utilisateurs non connectés
+                uniquement)
+              </div>
+            </div>
+          </div>
+          <div class="endpoint post">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-post">POST</span>
+              <span class="endpoint-path">/login</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Authentifie un utilisateur avec ses identifiants et crée une
+                session
+              </div>
+              <div class="code-block">
+                { "email": "utilisateur@exemple.com", "password":
+                "motdepasse123", "remember": true }
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Connexion réussie -
+                  redirection
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Identifiants
+                  invalides
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Register -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/register</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Affiche le formulaire d'inscription pour nouveaux utilisateurs
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Page d'inscription
+                  affichée
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> guest (utilisateurs non connectés
+                uniquement)
+              </div>
+            </div>
+          </div>
+          <div class="endpoint post">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-post">POST</span>
+              <span class="endpoint-path">/register</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Crée un nouveau compte utilisateur et établit une session
+              </div>
+              <div class="code-block">
+                { "name": "Jean Dupont", "email": "jean@exemple.com",
+                "password": "motdepasse123", "password_confirmation":
+                "motdepasse123" }
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">201</span> Compte créé avec succès
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Erreur de
+                  validation
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Logout -->
+          <div class="endpoint post">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-post">POST</span>
+              <span class="endpoint-path">/logout</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Déconnecte l'utilisateur et invalide sa session
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Déconnexion réussie
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> auth (utilisateurs connectés
+                uniquement)
+              </div>
+            </div>
+          </div>
+          <!-- Password Reset avec Token -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/reset-password/{token}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Affiche le formulaire de réinitialisation de mot de passe avec token de sécurité
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">token</span>
+                  <span class="param-type">(string, requis)</span> - Token de réinitialisation envoyé par email
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Formulaire de réinitialisation affiché
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Token invalide ou expiré
+                </div>
+              </div>
+              <div class="note">
+                <strong>Nom de route :</strong> password.reset | <strong>Contrôleur :</strong> NewPasswordController@create
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint post">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-post">POST</span>
+              <span class="endpoint-path">/reset-password</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Traite la réinitialisation du mot de passe avec le token et le nouveau mot de passe
+              </div>
+              <div class="code-block">
+{
+  "token": "abc123def456...",
+  "email": "utilisateur@exemple.com",
+  "password": "nouveaumotdepasse123",
+  "password_confirmation": "nouveaumotdepasse123"
+}
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Mot de passe réinitialisé avec succès
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Token invalide ou données incorrectes
+                </div>
+              </div>
+              <div class="note">
+                <strong>Nom de route :</strong> password.store | <strong>Contrôleur :</strong> NewPasswordController@store
+              </div>
+            </div>
+          </div>
+
+          <!-- Email Verification -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/verify-email</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Affiche la page d'information sur la vérification d'email en attente
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Page de notification de vérification affichée
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> auth | <strong>Nom de route :</strong> verification.notice | <strong>Contrôleur :</strong> EmailVerificationPromptController
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/verify-email/{id}/{hash}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Vérifie l'adresse email d'un utilisateur via le lien reçu par email
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">id</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de l'utilisateur
+                </div>
+                <div class="param">
+                  <span class="param-name">hash</span>
+                  <span class="param-type">(string, requis)</span> - Hash de vérification
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Email vérifié avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Lien de vérification invalide
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> signed, throttle:6,1 | <strong>Nom de route :</strong> verification.verify | <strong>Contrôleur :</strong> VerifyEmailController
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint post">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-post">POST</span>
+              <span class="endpoint-path">/email/verification-notification</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Renvoie un email de vérification à l'utilisateur connecté
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Email de vérification envoyé
+                </div>
+                <div>
+                  <span class="response-code validation">429</span> Trop de tentatives (limite atteinte)
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> throttle:6,1 | <strong>Nom de route :</strong> verification.send | <strong>Contrôleur :</strong> EmailVerificationNotificationController@store
+              </div>
+            </div>
+          </div>
+
+          <!-- Password Confirmation -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/confirm-password</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Affiche le formulaire de confirmation de mot de passe pour les actions sensibles
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Formulaire de confirmation affiché
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> auth | <strong>Nom de route :</strong> password.confirm | <strong>Contrôleur :</strong> ConfirmablePasswordController@show
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint post">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-post">POST</span>
+              <span class="endpoint-path">/confirm-password</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Vérifie et confirme le mot de passe de l'utilisateur pour les actions sensibles
+              </div>
+              <div class="code-block">
+{
+  "password": "motdepasseactuel123"
+}
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Mot de passe confirmé avec succès
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Mot de passe incorrect
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> auth | <strong>Contrôleur :</strong> ConfirmablePasswordController@store
+              </div>
+            </div>
+          </div>
+
+          <!-- Password Update -->
+          <div class="endpoint" style="border-left: 5px solid #6f42c1;">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-put">PUT</span>
+              <span class="endpoint-path">/password</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Met à jour le mot de passe de l'utilisateur connecté
+              </div>
+              <div class="code-block">
+{
+  "current_password": "ancienMotDePasse123",
+  "password": "nouveauMotDePasse456",
+  "password_confirmation": "nouveauMotDePasse456"
+}
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Mot de passe mis à jour avec succès
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Erreur de validation ou mot de passe actuel incorrect
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> auth | <strong>Nom de route :</strong> password.update | <strong>Contrôleur :</strong> PasswordController@update
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- WEB ROUTES -->
+        <section class="section" id="web-routes">
+          <h2 class="section-title">🌐 Routes Web (Interface utilisateur)</h2>
+          <div class="auth-info">
+            <h3>🖥️ Application Web Inertia.js</h3>
+            <p><strong>Framework :</strong> Laravel + Vue.js avec Inertia.js</p>
+            <p>
+              <strong>Authentification :</strong> Middleware Laravel Breeze
+              requis pour la plupart des pages
+            </p>
+            <p>
+              <strong>Rendu :</strong> Server-Side Rendering (SSR) avec
+              composants Vue.js
+            </p>
+            <div class="note">
+              <strong>📋 Qu'est-ce que les "Props" ?</strong><br>
+              Les <strong>props</strong> (properties) sont des données que Laravel envoie aux composants Vue.js via Inertia.js. 
+              Par exemple : <code>Inertia::render('Dashboard', ['user' => $user])</code> envoie les données utilisateur comme "prop" 
+              au composant Dashboard.vue, qui peut ensuite les utiliser directement dans son template. 
+              C'est le pont de données entre votre backend Laravel et votre frontend Vue.js.
+            </div>
+          </div>
+          <!-- Page d'accueil -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Page d'accueil de Nova League avec informations sur
+                l'application et liens de connexion/inscription
+              </div>
+              <div class="response">
+                <div class="response-title">Composant rendu :</div>
+                <div>
+                  <span class="response-code">200</span> Welcome.vue - Page
+                  d'accueil publique
+                </div>
+              </div>
+              <div class="note">
+                <strong>Props :</strong> canLogin, canRegister, laravelVersion,
+                phpVersion
+              </div>
+            </div>
+          </div>
+          <!-- Dashboard -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/dashboard</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Tableau de bord principal de l'utilisateur connecté avec vue
+                d'ensemble de ses activités
+              </div>
+              <div class="response">
+                <div class="response-title">Composant rendu :</div>
+                <div>
+                  <span class="response-code">200</span> Dashboard.vue - Tableau
+                  de bord utilisateur
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> auth, verified |
+                <strong>Props :</strong> user
+              </div>
+            </div>
+          </div>
+          <!-- Formation Flow -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/trainingFlow</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Interface de parcours de formation structurée pour les
+                utilisateurs
+              </div>
+              <div class="response">
+                <div class="response-title">Composant rendu :</div>
+                <div>
+                  <span class="response-code">200</span> TrainingFlow.vue -
+                  Parcours de formation
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> auth, verified |
+                <strong>Props :</strong> user | <strong>Nom de route :</strong> trainingFlow
+              </div>
+            </div>
+          </div>
+          <!-- FormaQuiz Interface -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path"
+                >/modules/{moduleid}/formaquizzes/{formaquizid}</span
+              >
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Interface interactive pour passer un FormaQuiz spécifique dans
+                un module donné
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">moduleid</span>
+                  <span class="param-type">(integer, requis)</span> -
+                  Identifiant du module
+                </div>
+                <div class="param">
+                  <span class="param-name">formaquizid</span>
+                  <span class="param-type">(integer, requis)</span> -
+                  Identifiant du FormaQuiz
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Composant rendu :</div>
+                <div>
+                  <span class="response-code">200</span> FormaQuiz.vue -
+                  Interface de quiz
+                </div>
+                <div>
+                  <span class="response-code error">404</span> FormaQuiz non
+                  trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> auth, verified |
+                <strong>Props :</strong> formaquiz (avec module), user
+              </div>
+            </div>
+          </div>
+
+          <!-- Challenge Interface -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/modules/{moduleId}/challenges/{challengeid}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Interface interactive pour participer à un challenge spécifique dans un module donné
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">moduleId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant du module
+                </div>
+                <div class="param">
+                  <span class="param-name">challengeid</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant du challenge
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Composant rendu :</div>
+                <div>
+                  <span class="response-code">200</span> Challenge.vue - Interface de challenge
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Challenge non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> auth, verified | <strong>Props :</strong> module, challenge (avec module), user
+              </div>
+            </div>
+          </div>
+
+          <!-- Rules -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/rules</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Affiche les règles et consignes de la plateforme Nova League pour les utilisateurs
+              </div>
+              <div class="response">
+                <div class="response-title">Composant rendu :</div>
+                <div>
+                  <span class="response-code">200</span> Rules.vue - Page des règles
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> auth, verified
+              </div>
+            </div>
+          </div>
+
+          <!-- Ressources -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/ressources</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Page des ressources pédagogiques et supports de formation disponibles
+              </div>
+              <div class="response">
+                <div class="response-title">Composant rendu :</div>
+                <div>
+                  <span class="response-code">200</span> Ressources.vue - Page des ressources
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> auth, verified | <strong>Nom de route :</strong> ressources
+              </div>
+            </div>
+          </div>
+
+          <!-- Breitling Cup -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/breitlingCup</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Interface dédiée à la compétition Breitling Cup avec classements et événements spéciaux
+              </div>
+              <div class="response">
+                <div class="response-title">Composant rendu :</div>
+                <div>
+                  <span class="response-code">200</span> BreitlingCup.vue - Page Breitling Cup
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> auth, verified | <strong>Nom de route :</strong> breitlingCup
+              </div>
+            </div>
+          </div>
+
+          <!-- Test Web -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/test-web</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Endpoint de test pour vérifier le bon fonctionnement des routes web
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Retourne "Web OK" - Test réussi
+                </div>
+              </div>
+              <div class="note">
+                <strong>Usage :</strong> Route de diagnostic et de monitoring
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile Management -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/profile</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Affiche la page d'édition du profil utilisateur avec formulaire de modification
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Page d'édition du profil affichée
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> auth | <strong>Nom de route :</strong> profile.edit | <strong>Contrôleur :</strong> ProfileController@edit
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint patch">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-patch">PATCH</span>
+              <span class="endpoint-path">/profile</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Met à jour les informations du profil utilisateur (nom, email, mot de passe, etc.)
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Profil mis à jour avec succès
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Erreur de validation des données
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> auth | <strong>Nom de route :</strong> profile.update | <strong>Contrôleur :</strong> ProfileController@update
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint delete">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-delete">DELETE</span>
+              <span class="endpoint-path">/profile</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Supprime définitivement le compte utilisateur et toutes ses données associées
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Compte supprimé avec succès
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Erreur lors de la suppression
+                </div>
+              </div>
+              <div class="note">
+                <strong>Middleware :</strong> auth | <strong>Nom de route :</strong> profile.destroy | <strong>Contrôleur :</strong> ProfileController@destroy
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PHP ROUTES -->
+        <section class="section" id="php-routes">
+          <h2 class="section-title">📄 Routes PHP (vues statiques)</h2>
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/privacy</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Affiche la politique de confidentialité (fichier privacy.php)
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Contenu de privacy.php
+                  affiché
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/terms</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Affiche les conditions d'utilisation (fichier terms.php)
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Contenu de terms.php
+                  affiché
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MODULES -->
+        <section class="section" id="modules">
+          <h2 class="section-title">📚 Modules</h2>
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/modules</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère la liste de tous les modules de formation disponibles sur la plateforme Nova League
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Liste des modules récupérée avec succès
+                </div>
+                <div>
+                  <span class="response-code error">500</span> Erreur interne du serveur
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> ModuleController@getModules
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/modules/{id}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère les détails complets d'un module spécifique par son identifiant unique
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">id</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant unique du module
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Module récupéré avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Module non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> ModuleController@getModule
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/modules/past</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère la liste des modules qui sont terminés ou dont la date d'expiration est dépassée
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Modules passés récupérés avec succès
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> ModuleController@getPastModules | <strong>Priorité :</strong> Route spécifique
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/modules/with-relations</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère les modules avec toutes leurs données liées (challenges, formaquiz, progression, etc.)
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Modules avec relations récupérés avec succès
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> ModuleController@getModulesWithRelations | <strong>Priorité :</strong> Route spécifique
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/modules/{moduleId}/challenge</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère le challenge associé à un module spécifique
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">moduleId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant du module
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Challenge du module récupéré avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Module ou challenge non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> ChallengeController@getChallengeByModuleId
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/modules/{moduleId}/formaQuizzes</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère les FormaQuiz associés à un module spécifique
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">moduleId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant du module
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> FormaQuiz du module récupérés avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Module non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> FormaQuizController@getFormaQuizByModuleId
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/modules/{moduleId}/questions</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère toutes les questions associées à un module spécifique
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">moduleId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant du module
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Questions du module récupérées avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Module non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> QuestionController@getQuestionsByModule
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CHALLENGES -->
+        <section class="section" id="challenges">
+          <h2 class="section-title">🎯 Challenges</h2>
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/challenges</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère la liste complète de tous les défis disponibles sur la plateforme
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Défis récupérés avec succès
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> ChallengeController@getChallenges
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/challenges/{id}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère les détails complets d'un défi spécifique incluant ses règles et critères d'évaluation
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">id</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant unique du défi
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Défi récupéré avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Défi non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> ChallengeController@getChallenge
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- FORMAQUIZ -->
+        <section class="section" id="formaquiz">
+          <h2 class="section-title">📝 FormaQuiz</h2>
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/formaQuizzes/{id}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère les détails complets d'un FormaQuiz spécifique avec ses questions et contenus
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">id</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant unique du FormaQuiz
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> FormaQuiz récupéré avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> FormaQuiz non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> FormaQuizController@getFormaQuiz
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/formaQuizzes/{formaquizId}/pages</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère toutes les pages associées à un FormaQuiz spécifique, incluant le contenu théorique et les questions
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">formaquizId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant du FormaQuiz
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Pages du FormaQuiz récupérées avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> FormaQuiz non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> PageController@getPagesByFormaquizId
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- USERS -->
+        <section class="section" id="users">
+          <h2 class="section-title">👥 Utilisateurs</h2>
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/users</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère la liste de tous les utilisateurs enregistrés sur la plateforme Nova League
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Liste des utilisateurs récupérée avec succès
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserController@getAllUsers
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/users/{id}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère les informations détaillées d'un utilisateur spécifique par son identifiant
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">id</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant unique de l'utilisateur
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Utilisateur récupéré avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Utilisateur non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserController@getUserById
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/users/place-of-sales</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère les utilisateurs groupés par point de vente pour l'analyse des performances par zone géographique
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Utilisateurs par point de vente récupérés avec succès
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserController@getUsersByPlaceOfSales | <strong>Priorité :</strong> Route spécifique
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/users/work-start-date</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère les utilisateurs filtrés par leur date de début de travail pour l'analyse de cohortes
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Utilisateurs par date de début récupérés avec succès
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserController@getUsersByWorkStartDate | <strong>Priorité :</strong> Route spécifique
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROGRESS -->
+        <section class="section" id="progress">
+          <h2 class="section-title">📊 Progrès</h2>
+          
+          <!-- User Challenge Progress -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/users/{userId}/progress</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère la progression globale d'un utilisateur sur tous ses challenges
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">userId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de l'utilisateur
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Progression utilisateur récupérée avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Utilisateur non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserChallengeController@getUserProgress
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/users/{userId}/progress/{challengeId}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère la progression détaillée d'un utilisateur sur un challenge spécifique
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">userId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de l'utilisateur
+                </div>
+                <div class="param">
+                  <span class="param-name">challengeId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant du challenge
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Progression sur le challenge récupérée avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Utilisateur ou challenge non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserChallengeController@getUserChallengeProgress
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint post">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-post">POST</span>
+              <span class="endpoint-path">/api/v1/users/progress</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Enregistre un nouveau score de challenge pour un utilisateur
+              </div>
+              <div class="code-block">
+{
+  "user_id": 1,
+  "challenge_id": 5,
+  "score": 85,
+  "completed_at": "2024-06-10T14:30:00Z"
+}
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">201</span> Score enregistré avec succès
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Erreur de validation des données
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserChallengeController@storeUserChallengeScore
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint patch">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-patch">PATCH</span>
+              <span class="endpoint-path">/api/v1/users/{userId}/progress/{challengeId}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Met à jour le meilleur score d'un utilisateur sur un challenge spécifique
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">userId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de l'utilisateur
+                </div>
+                <div class="param">
+                  <span class="param-name">challengeId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant du challenge
+                </div>
+              </div>
+              <div class="code-block">
+{
+  "best_score": 95,
+  "completed_at": "2024-06-10T15:45:00Z"
+}
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Meilleur score mis à jour avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Progression non trouvée
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Erreur de validation
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserChallengeController@updateUserBestScore
+              </div>
+            </div>
+          </div>
+
+          <!-- User FormaQuiz Progress -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/users/{userId}/formaquiz-progresses</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère la progression d'un utilisateur sur tous ses FormaQuiz
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">userId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de l'utilisateur
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Progression FormaQuiz récupérée avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Utilisateur non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserFormaquizController@getUserFormaquizProgress
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/users/{userId}/formaquiz-progresses/{formaquizId}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère la progression détaillée d'un utilisateur sur un FormaQuiz spécifique
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">userId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de l'utilisateur
+                </div>
+                <div class="param">
+                  <span class="param-name">formaquizId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant du FormaQuiz
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Progression FormaQuiz spécifique récupérée
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Progression non trouvée
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserFormaquizController@getUserFormaquizById
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint post">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-post">POST</span>
+              <span class="endpoint-path">/api/v1/users/formaquiz-progresses</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Crée une nouvelle progression FormaQuiz pour un utilisateur
+              </div>
+              <div class="code-block">
+{
+  "user_id": 1,
+  "formaquiz_id": 3,
+  "current_page": 1,
+  "total_pages": 10,
+  "score": 0,
+  "started_at": "2024-06-10T14:00:00Z"
+}
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">201</span> Progression FormaQuiz créée avec succès
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Erreur de validation
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserFormaquizController@createUserFormaquizProgress
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint patch">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-patch">PATCH</span>
+              <span class="endpoint-path">/api/v1/users/{userId}/formaquiz-progresses/{userFormaquizId}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Met à jour la progression d'un utilisateur sur un FormaQuiz (page actuelle, score, etc.)
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">userId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de l'utilisateur
+                </div>
+                <div class="param">
+                  <span class="param-name">userFormaquizId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de la progression FormaQuiz
+                </div>
+              </div>
+              <div class="code-block">
+{
+  "current_page": 5,
+  "score": 42,
+  "completed_at": "2024-06-10T16:30:00Z"
+}
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Progression mise à jour avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Progression non trouvée
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Erreur de validation
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserFormaquizController@updateUserFormaquizProgress
+              </div>
+            </div>
+          </div>
+
+          <!-- User Module Progress -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/users/{userId}/modules-progresses</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère la progression d'un utilisateur sur tous ses modules de formation
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">userId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de l'utilisateur
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Progression modules récupérée avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Utilisateur non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserModuleController@getUserModulesProgress
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/users/{userId}/modules-progresses/{moduleId}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère la progression détaillée d'un utilisateur sur un module spécifique
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">userId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de l'utilisateur
+                </div>
+                <div class="param">
+                  <span class="param-name">moduleId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant du module
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Progression module spécifique récupérée
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Progression non trouvée
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserModuleController@getUserModuleById
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint post">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-post">POST</span>
+              <span class="endpoint-path">/api/v1/users/modules-progresses</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Crée une nouvelle progression de module pour un utilisateur
+              </div>
+              <div class="code-block">
+{
+  "user_id": 1,
+  "module_id": 2,
+  "progress_percentage": 0,
+  "started_at": "2024-06-10T14:00:00Z"
+}
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">201</span> Progression module créée avec succès
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Erreur de validation
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserModuleController@createUserModuleProgress
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint patch">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-patch">PATCH</span>
+              <span class="endpoint-path">/api/v1/users/{userId}/modules-progresses/{userModuleId}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Met à jour la progression d'un utilisateur sur un module (pourcentage, statut d'achèvement, etc.)
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">userId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de l'utilisateur
+                </div>
+                <div class="param">
+                  <span class="param-name">userModuleId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de la progression module
+                </div>
+              </div>
+              <div class="code-block">
+{
+  "progress_percentage": 75,
+  "completed_at": "2024-06-10T17:30:00Z"
+}
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Progression module mise à jour avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Progression non trouvée
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Erreur de validation
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserModuleController@updateUserModuleProgress
+              </div>
+            </div>
+          </div>
+
+          <!-- User Month Streak -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/users/{userId}/month-streak</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère les séries mensuelles d'activité d'un utilisateur (streaks de connexion/engagement)
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">userId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de l'utilisateur
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Séries mensuelles récupérées avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Utilisateur non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserMonthStreakController@getUserMonthStreak
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint post">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-post">POST</span>
+              <span class="endpoint-path">/api/v1/users/month-streak</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Crée une nouvelle série mensuelle pour un utilisateur
+              </div>
+              <div class="code-block">
+{
+  "user_id": 1,
+  "month": "2024-06",
+  "streak_count": 1,
+  "last_activity_date": "2024-06-10"
+}
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">201</span> Série mensuelle créée avec succès
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Erreur de validation
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserMonthStreakController@createUserMonthStreak
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint patch">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-patch">PATCH</span>
+              <span class="endpoint-path">/api/v1/users/{userId}/month-streak</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Met à jour la série mensuelle d'un utilisateur (incrément du compteur, nouvelle activité)
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">userId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de l'utilisateur
+                </div>
+              </div>
+              <div class="code-block">
+{
+  "streak_count": 15,
+  "last_activity_date": "2024-06-10"
+}
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Série mensuelle mise à jour avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Série non trouvée
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Erreur de validation
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserMonthStreakController@updateUserMonthStreak
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- MARKETS -->
+        <section class="section" id="markets">
+          <h2 class="section-title">🌍 Marchés</h2>
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/markets</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère la liste de tous les marchés disponibles sur la plateforme Nova League
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Liste des marchés récupérée avec succès
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> MarketController@getMarkets
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/markets/{id}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère les détails complets d'un marché spécifique incluant ses caractéristiques et zones géographiques
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">id</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant unique du marché
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Marché récupéré avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Marché non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> MarketController@getMarket
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PLACES -->
+        <section class="section" id="places">
+          <h2 class="section-title">🏪 Points de vente</h2>
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/placeOfSales</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère la liste de tous les points de vente enregistrés dans le système
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Liste des points de vente récupérée avec succès
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> PlaceOfSalesController@getAllPlaceOfSales
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/placeOfSales/{id}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère les détails complets d'un point de vente spécifique incluant sa localisation et ses caractéristiques
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">id</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant unique du point de vente
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Point de vente récupéré avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Point de vente non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> PlaceOfSalesController@getPlaceOfSales
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/placeOfSales/{placeOfSalesId}/users</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère tous les utilisateurs associés à un point de vente spécifique pour l'analyse des performances par zone
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">placeOfSalesId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant du point de vente
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Utilisateurs du point de vente récupérés avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Point de vente non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> UserChallengeController@getUsersByPlaceOfSales
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- REGISTRATION -->
+        <section class="section" id="registration">
+          <h2 class="section-title">✍️ Inscription</h2>
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/registration-keys/verify/{registrationKey}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Vérifie la validité d'une clé d'inscription avant de permettre l'enregistrement d'un nouvel utilisateur
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">registrationKey</span>
+                  <span class="param-type">(string, requis)</span> - Clé d'inscription à vérifier
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Clé valide et disponible
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Clé non trouvée ou expirée
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Clé déjà utilisée
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> RegistrationKeyController@verifyRegistrationKey | <strong>Priorité :</strong> Route spécifique
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/registration-keys/{key}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère les détails d'une clé d'inscription spécifique incluant ses permissions et restrictions
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">key</span>
+                  <span class="param-type">(string, requis)</span> - Clé d'inscription
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Détails de la clé récupérés avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Clé non trouvée
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> RegistrationController@getRegistrationKey
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint post">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-post">POST</span>
+              <span class="endpoint-path">/api/v1/registerKey</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Enregistre un nouvel utilisateur sur la plateforme en utilisant une clé d'inscription valide
+              </div>
+              <div class="code-block">
+{
+  "registration_key": "NK-ABC123-XYZ789",
+  "name": "Jean Dupont",
+  "email": "jean.dupont@example.com",
+  "password": "motdepasse123",
+  "password_confirmation": "motdepasse123",
+  "place_of_sales_id": 5
+}
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">201</span> Utilisateur enregistré avec succès
+                </div>
+                <div>
+                  <span class="response-code validation">422</span> Erreur de validation ou clé invalide
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Clé d'inscription non trouvée
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> RegistrationController@registerUser
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CONTENT -->
+        <section class="section" id="content">
+          <h2 class="section-title">📖 Contenu</h2>
+          
+          <!-- Pages & Questions -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/pages/{pageId}/questions</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère toutes les questions associées à une page spécifique d'un FormaQuiz
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">pageId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de la page
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Questions de la page récupérées avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Page non trouvée
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> QuestionController@getQuestionsByPage
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/pages/theory/{pageId}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère le contenu théorique associé à une page spécifique d'un FormaQuiz
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">pageId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de la page
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Contenu théorique récupéré avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Page ou contenu théorique non trouvé
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> TheoryController@getTheoryByPageId
+              </div>
+            </div>
+          </div>
+
+          <!-- Choices -->
+          <div class="endpoint">
+            <div class="endpoint-header">
+              <span class="endpoint-method method-get">GET</span>
+              <span class="endpoint-path">/api/v1/choices/question/{questionId}</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="endpoint-description">
+                Récupère toutes les options de réponse (choix multiples) pour une question spécifique
+              </div>
+              <div class="params">
+                <div class="params-title">Paramètres :</div>
+                <div class="param">
+                  <span class="param-name">questionId</span>
+                  <span class="param-type">(integer, requis)</span> - Identifiant de la question
+                </div>
+              </div>
+              <div class="response">
+                <div class="response-title">Réponses :</div>
+                <div>
+                  <span class="response-code">200</span> Choix de réponse récupérés avec succès
+                </div>
+                <div>
+                  <span class="response-code error">404</span> Question non trouvée
+                </div>
+              </div>
+              <div class="note">
+                <strong>Contrôleur :</strong> ChoiceController@getChoicesByQuestionId
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <footer class="footer">
+          <h3>Nova League API v1.0</h3>
+          <p>Documentation générée automatiquement • Dernière mise à jour : Juin 2025</p>
+          <p>Pour plus d'informations, contactez l'équipe de développement Nova League</p>
+        </footer>
+      </div>
     </div>
-
-    <script>
-        // Smooth scrolling pour la navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Highlight de la section active
-        window.addEventListener('scroll', () => {
-            const sections = document.querySelectorAll('.section');
-            const navLinks = document.querySelectorAll('.nav-item a');
-            
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= (sectionTop - 200)) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            navLinks.forEach(link => {
-                link.style.background = '';
-                if (link.getAttribute('href') === `#${current}`) {
-                    link.style.background = 'rgba(255,255,255,0.2)';
-                }
-            });
-        });
-    </script>
-</body>
+  </body>
 </html>
